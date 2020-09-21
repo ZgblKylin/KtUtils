@@ -82,9 +82,9 @@ template <class Clock, class Duration>
 bool WaitUntil(const std::chrono::time_point<Clock, Duration>& timeout_time,
                QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
                const std::function<bool(void)>& isValid = {});
-/* ======== Declaration ======== */
+/* ================ Declaration ================ */
 
-/* ======== Definition ======== */
+/* ================ Definition ================ */
 inline bool WaitFor(int timeout_milliseconds,
                     QEventLoop::ProcessEventsFlags flags,
                     const std::function<bool(void)>& isValid) {

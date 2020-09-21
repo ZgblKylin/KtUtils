@@ -3,12 +3,10 @@
 namespace KtUtils {
 void Wait(const std::function<bool(void)>& isValid,
           QEventLoop::ProcessEventsFlags flags) {
-  if (!isValid) {
-    return;
-  }
-  QEventLoop eventLoop;
-  while (!isValid()) {
-    eventLoop.processEvents(flags);
+  if (isValid) {
+    while (!isValid()) {
+      QCoreApplication::processEvents(flags, 10);
+    }
   }
 }
 }  // namespace KtUtils

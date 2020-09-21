@@ -4,80 +4,72 @@
 using namespace std::chrono;
 
 namespace KtUtils {
-/* ======== AsyncInvokeEvent ======== */
-struct AsyncInvokeEventData {
+/* ================ AsyncInvokeData ================ */
+struct AsyncInvokeData {
   std::function<QVariant(void)> Function;
-  int delay_ms;
+  int delay_ms = 0;
   std::function<bool(void)> IsAlive;
   std::promise<QVariant> promise;
   std::shared_future<QVariant> future;
   std::atomic_bool executed = ATOMIC_VAR_INIT(false);
-};
-
-class AsyncInvokeEvent : public QEvent {
- public:
-  AsyncInvokeEvent(std::function<QVariant(void)>&& function, int delay_ms,
-                   std::function<bool(void)>&& IsAlive);
-  AsyncInvokeEvent(AsyncInvokeEvent&&) = default;
-  ~AsyncInvokeEvent() override;
 
   void Invoke();
+};
+
+void AsyncInvokeData::Invoke() {
+  QVariant ret;
+  if (!IsAlive || IsAlive()) {
+    ret = Function();
+  }
+  promise.set_value(ret);
+  executed.store(true);
+}
+/* ================ AsyncInvokeData ================ */
+
+/* ================ AsyncInvokeEvent ================ */
+class AsyncInvokeEvent : public QEvent {
+ public:
+  AsyncInvokeEvent();
+  ~AsyncInvokeEvent() override = default;
 
   static const int kEventType;
-
-  QSharedPointer<AsyncInvokeEventData> d_;
+  QSharedPointer<AsyncInvokeData> d;
 };
 
 const int AsyncInvokeEvent::kEventType = QEvent::registerEventType();
 
-AsyncInvokeEvent::AsyncInvokeEvent(std::function<QVariant(void)>&& function,
-                                   int delay_ms,
-                                   std::function<bool(void)>&& isAlive)
-    : QEvent(QEvent::Type(kEventType)), d_(new AsyncInvokeEventData) {
-  d_->Function = function;
-  d_->delay_ms = delay_ms;
-  d_->IsAlive = isAlive;
-  d_->future = d_->promise.get_future();
-}
+AsyncInvokeEvent::AsyncInvokeEvent()
+    : QEvent(QEvent::Type(kEventType)), d(new AsyncInvokeData) {}
+/* ================ AsyncInvokeEvent ================ */
 
-AsyncInvokeEvent::~AsyncInvokeEvent() {}
-
-void AsyncInvokeEvent::Invoke() {
-  QVariant ret;
-  if (!d_->IsAlive || d_->IsAlive()) {
-    ret = d_->Function();
-  }
-  d_->promise.set_value(ret);
-  d_->executed.store(true);
-}
-/* ======== AsyncInvokeEvent ======== */
-
-/* ======== AsyncInvokeEvent ======== */
+/* ================ AsyncInvokeEvent ================ */
 class AsyncInvokerEventFilter : public QObject {
  public:
   explicit AsyncInvokerEventFilter(QThread* thread);
-  ~AsyncInvokerEventFilter();
 
  protected:
   bool event(QEvent* event) override;
   void timerEvent(QTimerEvent* event) override;
 
  private:
-  QHash<int, AsyncInvokeEvent*> events_;
+  QHash<int, QSharedPointer<AsyncInvokeData>> events_;
 };
 
 AsyncInvokerEventFilter::AsyncInvokerEventFilter(QThread* thread) {
   moveToThread(thread);
 }
 
-AsyncInvokerEventFilter::~AsyncInvokerEventFilter() { qDeleteAll(events_); }
-
 bool AsyncInvokerEventFilter::event(QEvent* event) {
   bool ret = QObject::event(event);
   if (event->type() == AsyncInvokeEvent::kEventType) {
     AsyncInvokeEvent* e = static_cast<AsyncInvokeEvent*>(event);
-    int id = startTimer(e->d_->delay_ms);
-    events_[id] = new AsyncInvokeEvent(std::move(*e));
+    if (e->d->delay_ms > 0) {
+      // Deferred event, invoke in timerEvent
+      int id = startTimer(e->d->delay_ms);
+      events_[id] = e->d;
+    } else {
+      e->d->Invoke();
+    }
   }
   event->accept();
   return ret;
@@ -94,21 +86,22 @@ void AsyncInvokerEventFilter::timerEvent(QTimerEvent* event) {
   it.value()->Invoke();
   events_.erase(it);
 }
-/* ======== AsyncInvokeEvent ======== */
+/* ================ AsyncInvokeEvent ================ */
 
-/* ======== AsyncInvoker ======== */
+/* ================ AsyncInvoker ================ */
 AsyncInvoker::Future AsyncInvoker::Invoke(
-    std::function<QVariant(void)> function, QThread* thread, int delay_ms,
-    std::function<bool(void)> isAlive) {
+    const std::function<QVariant(void)>& function, QThread* thread,
+    int delay_ms, const std::function<bool(void)>& isAlive) {
   if (!thread) {
     thread = qApp->thread();
   }
 
   AsyncInvokerEventFilter* filter;
   {
+    // Find event filter for given thread
     static std::atomic_flag flag = ATOMIC_FLAG_INIT;
     static QHash<QThread*, AsyncInvokerEventFilter*> filters;
-    while (flag.test_and_set(std::memory_order_seq_cst)) {
+    while (flag.test_and_set(std::memory_order_seq_cst)) { // Spin-lock
     }
     auto it = filters.find(thread);
     if (it == filters.end()) {
@@ -118,18 +111,23 @@ AsyncInvoker::Future AsyncInvoker::Invoke(
     flag.clear(std::memory_order_release);
   }
 
-  auto event =
-      new AsyncInvokeEvent{std::move(function), delay_ms, std::move(isAlive)};
+  auto event = new AsyncInvokeEvent;
+  event->d->Function = function;
+  event->d->delay_ms = delay_ms;
+  event->d->IsAlive = isAlive;
+  event->d->future = event->d->promise.get_future();
   QCoreApplication::postEvent(filter, event);
-  return Future{event->d_};
+  return Future{event->d};
 }
-/* ======== AsyncInvoker ======== */
+/* ================ AsyncInvoker ================ */
 
-/* ======== AsyncInvoker::Future ======== */
-AsyncInvoker::Future::Future(QSharedPointer<AsyncInvokeEventData> data)
+/* ================ AsyncInvoker::Future ================ */
+AsyncInvoker::Future::Future(const QSharedPointer<AsyncInvokeData>& data)
     : d_(data) {}
 
-AsyncInvoker::Future::~Future() {}
+AsyncInvoker::Future::~Future() {
+  // Forward-declared AsyncInvokeData to be destructed by shared pointer here
+}
 
 std::shared_future<QVariant> AsyncInvoker::Future::future() const {
   return d_->future;
@@ -158,5 +156,5 @@ const QVariant& AsyncInvoker::Future::get(
 void AsyncInvoker::Future::wait(QEventLoop::ProcessEventsFlags flags) const {
   Wait([this] { return valid(); }, flags);
 }
-/* ======== AsyncInvoker::Future ======== */
+/* ================ AsyncInvoker::Future ================ */
 }  // namespace KtUtils

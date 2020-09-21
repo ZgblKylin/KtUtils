@@ -6,8 +6,8 @@
 #include "global.h"
 
 namespace KtUtils {
-/* ======== Declaration ======== */
-struct AsyncInvokeEventData;
+/* ================ Declaration ================ */
+struct AsyncInvokeData;
 /** \brief Provide functionaliity like QTimer::singleShot with any functor. */
 class KT_UTILS_EXPORT AsyncInvoker {
  public:
@@ -32,9 +32,9 @@ class KT_UTILS_EXPORT AsyncInvoker {
    * \return Future handle to wait and acquire return value.
    */
   static Future Invoke(
-      std::function<QVariant(void)> function, QThread* thread = nullptr,
+      const std::function<QVariant(void)>& function, QThread* thread = nullptr,
       int delay_ms = 0,
-      std::function<bool(void)> isAlive = [] { return true; });
+      const std::function<bool(void)>& isAlive = [] { return true; });
 
   /**
    * \overload Invoke
@@ -70,7 +70,7 @@ class KT_UTILS_EXPORT AsyncInvoker {
    * but NOT block the event loop when waiting. */
   class KT_UTILS_EXPORT Future {
    public:
-    explicit Future(QSharedPointer<AsyncInvokeEventData> data = nullptr);
+    explicit Future(const QSharedPointer<AsyncInvokeData>& data = nullptr);
     Future(const Future&) = default;
     Future(Future&&) = default;
     Future& operator=(const Future&) = default;
@@ -80,7 +80,16 @@ class KT_UTILS_EXPORT AsyncInvoker {
     /** Return the underlying std::shared_future */
     std::shared_future<QVariant> future() const;
 
+    /** Check if underlying future is valid and function is invoked. */
     bool valid() const;
+
+    /**
+     * \brief Get current future status
+     * \return
+     *   - std::future_status::deferred: underlying future is not valid.\n
+     *   - std::future_status::timeout: function is not invoked.\n
+     *   - std::future_status::ready: valid() return true.
+     */
     std::future_status status() const;
 
     /**
@@ -135,12 +144,12 @@ class KT_UTILS_EXPORT AsyncInvoker {
         QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents) const;
 
    private:
-    QSharedPointer<AsyncInvokeEventData> d_;
+    QSharedPointer<AsyncInvokeData> d_;
   };
 };
-/* ======== Declaration ======== */
+/* ================ Declaration ================ */
 
-/* ======== Definition ======== */
+/* ================ Definition ================ */
 namespace impl {
 template <typename T>
 struct ApplyReturnValue {
@@ -192,7 +201,7 @@ inline AsyncInvoker::Future AsyncInvoker::Invoke(QObject* receiver,
     f(), impl::ApplyReturnValue<return_t>(&ret);
     return ret;
   };
-  return Invoke(std::move(function), thread, delay_ms, std::move(isAlive));
+  return Invoke(function, thread, delay_ms, isAlive);
 }
 
 template <typename T>
@@ -219,8 +228,7 @@ template <class Rep, class Period>
 inline std::future_status AsyncInvoker::Future::wait_for(
     const std::chrono::duration<Rep, Period>& timeout_duration,
     QEventLoop::ProcessEventsFlags flags) const {
-  std::chrono::duration<double, std::milli> duration = timeout_duration;
-  return wait_until(steady_clock::now() + timeout_duration, flags);
+  return wait_until(std::chrono::steady_clock::now() + timeout_duration, flags);
 }
 
 template <class Clock, class Duration>
@@ -230,7 +238,7 @@ inline std::future_status AsyncInvoker::Future::wait_until(
   WaitUntil(timeout_time, flags, [this] { return valid(); });
   return status();
 }
-/* ======== Definition ======== */
+/* ================ Definition ================ */
 }  // namespace KtUtils
 
 #endif  // KT_UTILS_ASYNCINVOKER_H

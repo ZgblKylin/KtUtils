@@ -250,7 +250,6 @@ void TestAsyncInvoker::Future_wait() {
   QVERIFY(timer.elapsed() < (kDelay + 100));
   timer.restart();
   QCOMPARE(future.get<QString>(), "42");
-  qInfo().nospace() << "get " << (timer.nsecsElapsed() / 1e6) << "ms";
 }
 
 void TestAsyncInvoker::Future_wait_for() {
@@ -260,6 +259,7 @@ void TestAsyncInvoker::Future_wait_for() {
   auto future = AsyncInvoker::Invoke(object_, thread_, kDelay,
                                      &TestAsyncInvoker::InvokeFunc_args, 42);
   future.wait_for(milliseconds(kDelay / 2));
+  qInfo().nospace() << "wait " << timer.nsecsElapsed() / 1e6 << "ms";
   QVERIFY(timer.elapsed() >= (kDelay * 0.9 / 2));
   QVERIFY(timer.elapsed() < kDelay);
   timer.restart();
@@ -274,6 +274,7 @@ void TestAsyncInvoker::Future_wait_for_Qt() {
   auto future = AsyncInvoker::Invoke(object_, thread_, kDelay,
                                      &TestAsyncInvoker::InvokeFunc_args, 42);
   future.wait_for(kDelay / 2);
+  qInfo().nospace() << "wait " << timer.nsecsElapsed() / 1e6 << "ms";
   QVERIFY(timer.elapsed() >= (kDelay * 0.9 / 2));
   QVERIFY(timer.elapsed() < kDelay);
   timer.restart();
@@ -288,7 +289,7 @@ void TestAsyncInvoker::Future_wait_until() {
   auto future = AsyncInvoker::Invoke(object_, thread_, kDelay,
                                      &TestAsyncInvoker::InvokeFunc_args, 42);
   future.wait_until(steady_clock::now() + milliseconds(kDelay / 2));
-  qDebug() << timer.nsecsElapsed() / 1e6;
+  qInfo().nospace() << "wait " << timer.nsecsElapsed() / 1e6 << "ms";
   QVERIFY(timer.elapsed() >= (kDelay * 0.9 / 2));
   QVERIFY(timer.elapsed() < kDelay);
   timer.restart();
@@ -303,6 +304,7 @@ void TestAsyncInvoker::Future_wait_until_Qt() {
   auto future = AsyncInvoker::Invoke(object_, thread_, kDelay,
                                      &TestAsyncInvoker::InvokeFunc_args, 42);
   future.wait_until(QDateTime::currentDateTime().addMSecs(kDelay / 2));
+  qInfo().nospace() << "wait " << timer.nsecsElapsed() / 1e6 << "ms";
   QVERIFY(timer.elapsed() >= (kDelay * 0.9 / 2));
   QVERIFY(timer.elapsed() < kDelay);
   timer.restart();
