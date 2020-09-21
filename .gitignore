@@ -1,3 +1,9 @@
+﻿# IDE and build
+.vscode/*
+build/*
+bin/*
+lib/*
+
 # C++ objects and libs
 *.slo
 *.lo
