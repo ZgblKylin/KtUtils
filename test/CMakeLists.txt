@@ -19,10 +19,5 @@ add_executable(TestGlobal
   global/testglobal.cpp)
 target_link_libraries(TestGlobal Qt5::Test KtUtils)
 
-add_executable(TestAsyncInvoker
-  asyncinvoker/testasyncinvoker.h
-  asyncinvoker/testasyncinvoker.cpp)
-target_link_libraries(TestAsyncInvoker Qt5::Test KtUtils)
-
 # ${CMAKE_CURRENT_LIST_DIR}/iconhelper.h
 # ${CMAKE_CURRENT_LIST_DIR}/iconhelper.cpp

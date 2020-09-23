@@ -1,5 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 SUBDIRS += \
-  global \
-  asyncinvoker
+  global
