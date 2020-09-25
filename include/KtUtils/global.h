@@ -49,7 +49,7 @@ Wait(const std::function<bool(void)>& isValid,
  *         true.
  */
 bool KT_UTILS_EXPORT
-WaitFor(int timeout_milliseconds,
+WaitFor(double timeout_milliseconds,
         QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
         const std::function<bool(void)>& isValid = {});
 
@@ -85,29 +85,15 @@ bool WaitUntil(const std::chrono::time_point<Clock, Duration>& timeout_time,
 /* ================ Declaration ================ */
 
 /* ================ Definition ================ */
-inline bool WaitFor(int timeout_milliseconds,
-                    QEventLoop::ProcessEventsFlags flags,
-                    const std::function<bool(void)>& isValid) {
-  return WaitUntil(std::chrono::steady_clock::now() +
-                       std::chrono::milliseconds(timeout_milliseconds),
-                   flags, isValid);
-}
-
-inline bool WaitUntil(const QDateTime& timeout_time,
-                      QEventLoop::ProcessEventsFlags flags,
-                      const std::function<bool(void)>& isValid) {
-  return WaitUntil(
-      std::chrono::system_clock::time_point() +
-          std::chrono::milliseconds(timeout_time.toMSecsSinceEpoch()),
-      flags, isValid);
-}
-
 template <class Rep, class Period>
 inline bool WaitFor(const std::chrono::duration<Rep, Period>& timeout_duration,
                     QEventLoop::ProcessEventsFlags flags,
                     const std::function<bool(void)>& isValid) {
-  return WaitUntil(std::chrono::steady_clock::now() + timeout_duration, flags,
-                   isValid);
+  return WaitFor(
+      std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
+          timeout_duration)
+          .count(),
+      flags, isValid);
 }
 
 template <class Clock, class Duration>
@@ -115,20 +101,7 @@ inline bool WaitUntil(
     const std::chrono::time_point<Clock, Duration>& timeout_time,
     QEventLoop::ProcessEventsFlags flags,
     const std::function<bool(void)>& isValid) {
-  auto isValidOrTimeout = [timeout_time, &isValid] {
-    if (isValid) {
-      if (isValid()) {
-        return true;
-      }
-    }
-    return Clock::now() >= timeout_time;
-  };
-  Wait(isValidOrTimeout, flags);
-  if (isValid) {
-    return isValid();
-  } else {
-    return true;
-  }
+  return WaitFor(timeout_time - Clock::now(), flags, isValid);
 }
 }  // namespace KtUtils
 
