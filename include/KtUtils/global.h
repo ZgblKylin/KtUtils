@@ -8,6 +8,7 @@
 #include <Qt>
 #include <QtCore/QtGlobal>
 #include <QtCore/QtCore>
+#include <QtConcurrent/QtCOncurrent>
 #include <QtGui/QtGui>
 #include <QtSvg/QtSvg>
 
