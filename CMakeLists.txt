@@ -68,10 +68,6 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.h
     ${CMAKE_CURRENT_LIST_DIR}/src/global.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/impl/futurehelper.h
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/future.h
-    ${CMAKE_CURRENT_LIST_DIR}/src/future.cpp
-
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/iconhelper.h
     ${CMAKE_CURRENT_LIST_DIR}/src/iconhelper.cpp
 
