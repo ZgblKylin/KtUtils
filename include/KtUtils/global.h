@@ -1,5 +1,6 @@
-﻿#ifndef KT_UTILS_GLOBAL_H
-#define KT_UTILS_GLOBAL_H
+﻿#pragma once
+#ifndef KTUTILS_GLOBAL_H
+#define KTUTILS_GLOBAL_H
 
 #include <chrono>
 #include <functional>
@@ -32,9 +33,9 @@ namespace KtUtils {
  *                QEventLoop::ExcludeUserInputEvents to wait without allowing
  *                user input.
  */
-void KT_UTILS_EXPORT
-Wait(const std::function<bool(void)>& isValid,
-     QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
+KT_UTILS_EXPORT void Wait(
+    const std::function<bool(void)>& isValid,
+    QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
 /**
  * \brief Wait for given time interval or specific criteria satisfied(if given)
@@ -49,10 +50,10 @@ Wait(const std::function<bool(void)>& isValid,
  * \return false if isValid is given and return false until timeout, otherwise
  *         true.
  */
-bool KT_UTILS_EXPORT
-WaitFor(double timeout_milliseconds,
-        QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
-        const std::function<bool(void)>& isValid = {});
+KT_UTILS_EXPORT bool WaitFor(
+    double timeout_milliseconds,
+    QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
+    const std::function<bool(void)>& isValid = {});
 
 /**
  * \brief Wait until given time or specific criteria satisfied(if given) WITHOUT
@@ -67,10 +68,10 @@ WaitFor(double timeout_milliseconds,
  * \return false if isValid is given and return false until timeout, otherwise
  *         true.
  */
-bool KT_UTILS_EXPORT
-WaitUntil(const QDateTime& timeout_time,
-          QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
-          const std::function<bool(void)>& isValid = {});
+KT_UTILS_EXPORT bool WaitUntil(
+    const QDateTime& timeout_time,
+    QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
+    const std::function<bool(void)>& isValid = {});
 
 /** \overload WaitFor */
 template <class Rep, class Period>
@@ -106,4 +107,4 @@ inline bool WaitUntil(
 }
 }  // namespace KtUtils
 
-#endif  // KT_UTILS_GLOBAL_H
+#endif  // KTUTILS_GLOBAL_H

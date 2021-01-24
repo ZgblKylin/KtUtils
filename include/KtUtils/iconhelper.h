@@ -1,5 +1,6 @@
-﻿#ifndef KT_UTILS_ICONHELPER_H
-#define KT_UTILS_ICONHELPER_H
+﻿#pragma once
+#ifndef KTUTILS_ICONHELPER_H
+#define KTUTILS_ICONHELPER_H
 
 #include "global.h"
 
@@ -1607,7 +1608,10 @@ class KT_UTILS_EXPORT IconHelper : public QObject {
 
  private:
   IconHelper() = default;
+  ~IconHelper() = default;
+  IconHelper(const IconHelper&) = delete;
+  IconHelper& operator=(const IconHelper&) = delete;
 };
 }  // namespace KtUtils
 
-#endif  // KT_UTILS_ICONHELPER_H
+#endif  // KTUTILS_ICONHELPER_H
