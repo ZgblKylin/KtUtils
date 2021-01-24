@@ -14,10 +14,5 @@ find_package(Qt5
 
 
 # Setup target
-add_executable(TestGlobal
-  global/testglobal.h
-  global/testglobal.cpp)
+add_executable(TestGlobal testglobal.hpp testglobal.cpp)
 target_link_libraries(TestGlobal Qt5::Test KtUtils)
-
-# ${CMAKE_CURRENT_LIST_DIR}/iconhelper.h
-# ${CMAKE_CURRENT_LIST_DIR}/iconhelper.cpp

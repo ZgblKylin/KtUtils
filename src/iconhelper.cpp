@@ -1,6 +1,6 @@
 ﻿#include <KtUtils/IconHelper>
 
-#ifndef KT_UTILS_SHARED_LIBRARY
+#ifndef KTUTILS_SHARED_LIBRARY
 void InitializeResources() { Q_INIT_RESOURCE(KtUtils); }
 #endif
 
@@ -70,7 +70,7 @@ void SetColor(QXmlStreamReader& reader, QXmlStreamWriter& writer,
 
 QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
                                          QColor color) {
-#ifndef KT_UTILS_SHARED_LIBRARY
+#ifndef KTUTILS_SHARED_LIBRARY
   static const int kInitResource = [] {
     InitializeResources();
     return 0;

@@ -45,9 +45,9 @@ if(BUILD_SHARED_LIBS)
   add_library(${PROJECT_NAME} SHARED)
   target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-      KT_UTILS_SHARED_LIBRARY
+      KTUTILS_SHARED_LIBRARY
     PRIVATE
-      KT_UTILS_BUILD_SHARED_LIBRARY
+      KTUTILS_BUILD_SHARED_LIBRARY
   )
 else()
   add_library(${PROJECT_NAME} STATIC)
@@ -55,20 +55,20 @@ endif()
 
 target_precompile_headers(${PROJECT_NAME}
   PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.hpp
 )
 
 target_sources(${PROJECT_NAME}
   PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/ktutils.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/ktutils.hpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/global.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/iconhelper.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/iconhelper.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/iconhelper.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/settings.h
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/settings.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/settings.cpp
 
     ${CMAKE_CURRENT_LIST_DIR}/KtUtils.qrc
@@ -91,7 +91,7 @@ target_include_directories(${PROJECT_NAME}
 # Setup test
 option(BUILD_TESTING "Build test" OFF)
 if (BUILD_TESTING)
-  add_subdirectory(test)
   enable_testing()
+  add_subdirectory(test)
   add_test(NAME TestGlobal COMMAND TestGlobal)
 endif()

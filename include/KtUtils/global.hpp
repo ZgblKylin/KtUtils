@@ -1,6 +1,6 @@
 ﻿#pragma once
-#ifndef KTUTILS_GLOBAL_H
-#define KTUTILS_GLOBAL_H
+#ifndef KTUTILS_GLOBAL_HPP
+#define KTUTILS_GLOBAL_HPP
 
 #include <chrono>
 #include <functional>
@@ -13,13 +13,13 @@
 #include <QtGui/QtGui>
 #include <QtSvg/QtSvg>
 
-#ifndef KT_UTILS_SHARED_LIBRARY
-#define KT_UTILS_EXPORT
+#ifndef KTUTILS_SHARED_LIBRARY
+#define KTUTILS_EXPORT
 #else
-#ifdef KT_UTILS_BUILD_SHARED_LIBRARY
-#define KT_UTILS_EXPORT Q_DECL_EXPORT
+#ifdef KTUTILS_BUILD_SHARED_LIBRARY
+#define KTUTILS_EXPORT Q_DECL_EXPORT
 #else
-#define KT_UTILS_EXPORT Q_DECL_IMPORT
+#define KTUTILS_EXPORT Q_DECL_IMPORT
 #endif
 #endif
 
@@ -33,7 +33,7 @@ namespace KtUtils {
  *                QEventLoop::ExcludeUserInputEvents to wait without allowing
  *                user input.
  */
-KT_UTILS_EXPORT void Wait(
+KTUTILS_EXPORT void Wait(
     const std::function<bool(void)>& isValid,
     QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
@@ -50,7 +50,7 @@ KT_UTILS_EXPORT void Wait(
  * \return false if isValid is given and return false until timeout, otherwise
  *         true.
  */
-KT_UTILS_EXPORT bool WaitFor(
+KTUTILS_EXPORT bool WaitFor(
     double timeout_milliseconds,
     QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
     const std::function<bool(void)>& isValid = {});
@@ -68,7 +68,7 @@ KT_UTILS_EXPORT bool WaitFor(
  * \return false if isValid is given and return false until timeout, otherwise
  *         true.
  */
-KT_UTILS_EXPORT bool WaitUntil(
+KTUTILS_EXPORT bool WaitUntil(
     const QDateTime& timeout_time,
     QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents,
     const std::function<bool(void)>& isValid = {});
@@ -107,4 +107,4 @@ inline bool WaitUntil(
 }
 }  // namespace KtUtils
 
-#endif  // KTUTILS_GLOBAL_H
+#endif  // KTUTILS_GLOBAL_HPP

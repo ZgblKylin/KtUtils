@@ -1,15 +1,13 @@
 ﻿#pragma once
-#ifndef KTUTILS_ICONHELPER_H
-#define KTUTILS_ICONHELPER_H
-
-#include "global.h"
+#ifndef KTUTILS_ICONHELPER_HPP
+#define KTUTILS_ICONHELPER_HPP
 
 namespace KtUtils {
 /**
  * \brief Generate QPixmap and QIcon for icons in Font Awesome
  *        (https://fontawesome.com/).
  */
-class KT_UTILS_EXPORT IconHelper : public QObject {
+class KTUTILS_EXPORT IconHelper : public QObject {
   Q_OBJECT
  public:
   /**
@@ -1614,4 +1612,4 @@ class KT_UTILS_EXPORT IconHelper : public QObject {
 };
 }  // namespace KtUtils
 
-#endif  // KTUTILS_ICONHELPER_H
+#endif  // KTUTILS_ICONHELPER_HPP
