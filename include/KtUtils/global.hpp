@@ -6,8 +6,6 @@
 #include <functional>
 
 #define QT_MESSAGELOGCONTEXT
-#include <Qt>
-#include <QtCore/QtGlobal>
 #include <QtCore/QtCore>
 #include <QtConcurrent/QtCOncurrent>
 #include <QtGui/QtGui>

@@ -13,12 +13,18 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   string(REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   if(CMAKE_BUILD_TYPE MATCHES "Debug")
     # Not find pdb file while linking debug dll
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS /ignore:4099)
   endif()
 else() # gcc clang
   add_compile_options(-Wall -Wextra -pedantic -Weffc++)
   add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
 endif()
+
+# Setup static build option
+option(BUILD_SHARED_LIBS "Build/link shared library" OFF)
+if(NOT BUILD_SHARED_LIBS)
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()  # BUILD_SHARED_LIBS
 
 
 
@@ -27,20 +33,17 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)  # if(CMAKE_VERSION VERSION_LESS "3.7.0")
-if(NOT TARGET Qt::Core)
-  find_package(Qt5
-    COMPONENTS
-      Core
-      Gui
-      Svg
-    REQUIRED
-  )
-endif()
+find_package(Qt5
+  COMPONENTS
+    Core
+    Gui
+    Svg
+  REQUIRED
+)
 
 
 
 # Setup target
-option(BUILD_SHARED_LIBS "Build/link shared library" OFF)
 if(BUILD_SHARED_LIBS)
   add_library(${PROJECT_NAME} SHARED)
   target_compile_definitions(${PROJECT_NAME}
@@ -76,10 +79,20 @@ target_sources(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   PUBLIC
-    Qt::Core
-    Qt::Gui
-    Qt::Svg
+    Qt5::Core
+    Qt5::Gui
+    Qt5::Svg
 )
+
+if(NOT BUILD_SHARED_LIBS)
+  target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+      Qt5::QSvgPlugin
+      Qt5::QSvgIconPlugin
+      $<$<PLATFORM_ID:Windows>:Qt5::QWindowsDirect2DIntegrationPlugin>
+  )
+endif()
+
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
