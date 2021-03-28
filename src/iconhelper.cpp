@@ -1,8 +1,14 @@
 ﻿#include <KtUtils/IconHelper>
 
+void InitializeResources() {
 #ifndef KTUTILS_SHARED_LIBRARY
-void InitializeResources() { Q_INIT_RESOURCE(KtUtils); }
+  static const bool kResourceInitialized = [] {
+    Q_INIT_RESOURCE(KtUtils);
+    return true;
+  }();
+  Q_UNUSED(kResourceInitialized)
 #endif
+}
 
 namespace KtUtils {
 //  Add path/fill attribute to svg
@@ -70,13 +76,7 @@ void SetColor(QXmlStreamReader& reader, QXmlStreamWriter& writer,
 
 QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
                                          QColor color) {
-#ifndef KTUTILS_SHARED_LIBRARY
-  static const int kInitResource = [] {
-    InitializeResources();
-    return 0;
-  }();
-  Q_UNUSED(kInitResource)
-#endif
+  InitializeResources();
 
   static QMetaObject mo = IconHelper::staticMetaObject;
   static QMetaEnum me = mo.enumerator(0);
@@ -140,5 +140,20 @@ QIcon IconHelper::icon(Icon iconType, const QColor& color) {
     icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
   }
   return icon;
+}
+
+QFont IconHelper::font(Font fontType) {
+  InitializeResources();
+
+  static QMap<int, int> kFontIds = {
+      {Brand, QFontDatabase::addApplicationFont(QStringLiteral(
+                  ":/Fonts/otfs/Font Awesome 5 Brands-Regular-400.otf"))},
+      {Regular, QFontDatabase::addApplicationFont(QStringLiteral(
+                    ":/Fonts/otfs/Font Awesome 5 Free-Regular-400.otf"))},
+      {Solid, QFontDatabase::addApplicationFont(QStringLiteral(
+                  ":/Fonts/otfs/Font Awesome 5 Free-Solid-900.otf"))},
+  };
+  return QFont(
+      QFontDatabase::applicationFontFamilies(kFontIds.value(fontType)).front());
 }
 }  // namespace KtUtils
