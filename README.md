@@ -5,6 +5,3 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a70beb37999b4a6298de4e4d3b3510d8)](https://www.codacy.com/gh/ZgblKylin/KtUtils/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ZgblKylin/KtUtils&amp;utm_campaign=Badge_Grade)
 
 Qt Utilities by ZgblKylin.
-
-
-
