@@ -60,7 +60,9 @@ else()
 endif()
 
 target_precompile_headers(${PROJECT_NAME}
-  PUBLIC
+  INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/ktutils.hpp
+  PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.hpp
 )
 
