@@ -1,5 +1,5 @@
-﻿# Setup CMake
-cmake_minimum_required(VERSION 3.7.8)
+# Setup CMake
+cmake_minimum_required(VERSION 3.15)
 project(KtUtils LANGUAGES C CXX)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 # Setup detailed warning
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   add_compile_options(/MP /wd4996 /wd4251)
+  add_compile_options(/Zc:__cplusplus) # Enable __cplusplus macro
   string(REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
   string(REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -22,7 +23,9 @@ endif()
 
 # Setup static build option
 option(BUILD_SHARED_LIBS "Build/link shared library" OFF)
+option(BUILD_TESTING "Build test" OFF)
 if(NOT BUILD_SHARED_LIBS)
+  # Use /MT /MTd instead of /MD /MDd when building static library
   set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()  # BUILD_SHARED_LIBS
 
@@ -32,7 +35,7 @@ endif()  # BUILD_SHARED_LIBS
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)  # if(CMAKE_VERSION VERSION_LESS "3.7.0")
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)  # if(CMAKE_VERSION VERSION_LESS "3.7.0")
 find_package(Qt5
   COMPONENTS
     Core
@@ -102,7 +105,6 @@ target_include_directories(${PROJECT_NAME}
 
 
 # Setup test
-option(BUILD_TESTING "Build test" OFF)
 if (BUILD_TESTING)
   enable_testing()
   add_subdirectory(test)
