@@ -7,18 +7,16 @@
 
 #define QT_MESSAGELOGCONTEXT
 #include <QtCore/QtCore>
-#include <QtConcurrent/QtCOncurrent>
+#include <QtConcurrent/QtConcurrent>
 #include <QtGui/QtGui>
 #include <QtSvg/QtSvg>
 
-#ifndef KTUTILS_SHARED_LIBRARY
-#define KTUTILS_EXPORT
-#else
-#ifdef KTUTILS_BUILD_SHARED_LIBRARY
+#ifdef KTUTILS_SHARED_LIBRARY
+#define KTUTILS_EXPORT Q_DECL_IMPORT
+#elif defined(KTUTILS_BUILD_SHARED_LIBRARY)
 #define KTUTILS_EXPORT Q_DECL_EXPORT
 #else
-#define KTUTILS_EXPORT Q_DECL_IMPORT
-#endif
+#define KTUTILS_EXPORT
 #endif
 
 namespace KtUtils {

@@ -1,4 +1,4 @@
-# Setup CMake
+﻿# Setup CMake
 cmake_minimum_required(VERSION 3.15)
 project(KtUtils LANGUAGES C CXX)
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
@@ -51,7 +51,7 @@ find_package(Qt5
 if(BUILD_SHARED_LIBS)
   add_library(${PROJECT_NAME} SHARED)
   target_compile_definitions(${PROJECT_NAME}
-    PUBLIC
+    INTERFACE
       KTUTILS_SHARED_LIBRARY
     PRIVATE
       KTUTILS_BUILD_SHARED_LIBRARY
@@ -68,7 +68,7 @@ target_precompile_headers(${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
-  PUBLIC
+  PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/ktutils.hpp
 
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.hpp

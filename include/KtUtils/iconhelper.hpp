@@ -2,6 +2,8 @@
 #ifndef KTUTILS_ICONHELPER_HPP
 #define KTUTILS_ICONHELPER_HPP
 
+#include "global.hpp"
+
 namespace KtUtils {
 /**
  * \brief Generate QPixmap and QIcon for icons in Font Awesome

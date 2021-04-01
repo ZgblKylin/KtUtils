@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 #ifndef KTUTILS_SETTINGS_HPP
 #define KTUTILS_SETTINGS_HPP
+
+#include "global.hpp"
 
 namespace KtUtils {
 // Helper functions for QSettings::registerFormat
