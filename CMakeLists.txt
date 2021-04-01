@@ -68,7 +68,7 @@ target_precompile_headers(${PROJECT_NAME}
 )
 
 target_sources(${PROJECT_NAME}
-  PRIVATE
+  PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/ktutils.hpp
 
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/global.hpp

@@ -83,8 +83,9 @@ QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
 
   QString name = me.valueToKey(iconType);
   name[name.indexOf('_')] = '/';
+  name.replace('_', '-');
 
-  QString svg = QStringLiteral(":/fonts/") + name;
+  QString svg = QStringLiteral(":/Fonts/svgs/%1.svg").arg(name);
   QFile file(svg);
   file.open(QIODevice::ReadOnly | QIODevice::Text);
   QXmlStreamReader reader(&file);
