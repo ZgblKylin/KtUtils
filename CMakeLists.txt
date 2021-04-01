@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 11)
 if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
   add_compile_options(/MP /wd4996 /wd4251)
   add_compile_options(/Zc:__cplusplus) # Enable __cplusplus macro
+  add_compile_options(/utf-8)
   string(REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
   string(REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
   if(CMAKE_BUILD_TYPE MATCHES "Debug")
