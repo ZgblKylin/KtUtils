@@ -57,6 +57,7 @@ void SetColor(QXmlStreamReader& reader, QXmlStreamWriter& writer,
 
       case QXmlStreamReader::DTD:
         writer.writeDTD(reader.text().toString());
+        break;
 
       case QXmlStreamReader::EntityReference:
         writer.writeEntityReference(reader.text().toString());
