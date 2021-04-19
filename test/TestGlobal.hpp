@@ -1,6 +1,6 @@
 ﻿#pragma once
-#ifndef KTUTILS_TEST_GLOBAL_H
-#define KTUTILS_TEST_GLOBAL_H
+#ifndef KTUTILS_TEST_GLOBAL_HPP
+#define KTUTILS_TEST_GLOBAL_HPP
 
 class TestGlobal : public QObject
 {
@@ -26,4 +26,4 @@ class TestGlobal : public QObject
   void WaitUntil_std_invalid();
 };
 
-#endif  // KTUTILS_TEST_GLOBAL_H
+#endif  // KTUTILS_TEST_GLOBAL_HPP

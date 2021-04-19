@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.7.8)
 project(KtUtilsTest LANGUAGES C CXX)
 
 
-
 # Setup Qt
 find_package(Qt5
   COMPONENTS
@@ -14,5 +13,5 @@ find_package(Qt5
 
 
 # Setup target
-add_executable(TestGlobal testglobal.hpp testglobal.cpp)
+add_executable(TestGlobal TestGlobal.hpp TestGlobal.cpp)
 target_link_libraries(TestGlobal Qt5::Test KtUtils)

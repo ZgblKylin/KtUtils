@@ -1,4 +1,4 @@
-﻿#include "testglobal.h"
+﻿#include "TestGlobal.hpp"
 #include <iomanip>
 #include <sstream>
 #include <QtConcurrent/QtConcurrent>
@@ -18,7 +18,7 @@ void WaitFunc(volatile bool* waitFlag, int timeout) {
     }
     return *waitFlag;
   });
-};
+}
 
 void TestGlobal::Wait() {
   static constexpr int kTimeout = 100;
@@ -35,7 +35,7 @@ void TestGlobal::Wait() {
 void WaitForFunc(volatile bool* waitFlag, int ms,
                  const std::function<bool(void)> isValid = {}) {
   *waitFlag = ::WaitFor(ms, QEventLoop::AllEvents, isValid);
-};
+}
 
 void TestGlobal::WaitFor() {
   static constexpr int kTimeout = 100;
@@ -82,7 +82,7 @@ template <typename Duration>
 void WaitForStdFunc(volatile bool* waitFlag, Duration duration,
                     const std::function<bool(void)> isValid = {}) {
   *waitFlag = ::WaitFor(duration, QEventLoop::AllEvents, isValid);
-};
+}
 
 void TestGlobal::WaitFor_std() {
   static constexpr auto kDuration = 100ms;
@@ -132,7 +132,7 @@ void TestGlobal::WaitFor_std_invalid() {
 void WaitUntilFunc(volatile bool* waitFlag, const QDateTime& dateTime,
                    const std::function<bool(void)> isValid = {}) {
   *waitFlag = ::WaitUntil(dateTime, QEventLoop::AllEvents, isValid);
-};
+}
 
 void TestGlobal::WaitUntil() {
   volatile bool waitFlag = false;
@@ -184,7 +184,7 @@ void WaitUntilStdFunc(volatile bool* waitFlag,
                       steady_clock::time_point timePoint,
                       const std::function<bool(void)> isValid = {}) {
   *waitFlag = ::WaitUntil(timePoint, QEventLoop::AllEvents, isValid);
-};
+}
 
 void TestGlobal::WaitUntil_std() {
   volatile bool waitFlag = false;

@@ -2,7 +2,7 @@
 #ifndef KTUTILS_ICONHELPER_HPP
 #define KTUTILS_ICONHELPER_HPP
 
-#include "global.hpp"
+#include "Global.hpp"
 
 namespace KtUtils {
 /**

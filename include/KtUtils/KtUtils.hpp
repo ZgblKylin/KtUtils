@@ -2,8 +2,9 @@
 #ifndef KTUTILS_KTUTILS_HPP
 #define KTUTILS_KTUTILS_HPP
 
-#include "global.hpp"
-#include "iconhelper.hpp"
-#include "settings.hpp"
+#include "Global.hpp"
+#include "IconHelper.hpp"
+#include "Json.hpp"
+#include "Settings.hpp"
 
 #endif // KTUTILS_KTUTILS_HPP
