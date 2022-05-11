@@ -1,4 +1,3 @@
-#pragma once
 #ifndef KT_UTILS_JSON_HPP
 #define KT_UTILS_JSON_HPP
 

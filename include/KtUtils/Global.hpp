@@ -1,5 +1,4 @@
-﻿#pragma once
-#ifndef KTUTILS_GLOBAL_HPP
+﻿#ifndef KTUTILS_GLOBAL_HPP
 #define KTUTILS_GLOBAL_HPP
 
 #include <chrono>

@@ -6,30 +6,10 @@ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_CXX_STANDARD 14)
 
-# Setup detailed warning
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  add_compile_options(/MP /wd4996 /wd4251)
-  add_compile_options(/Zc:__cplusplus) # Enable __cplusplus macro
-  add_compile_options(/utf-8)
-  string(REPLACE "/W3" "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
-  string(REPLACE "/W3" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
-  if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    # Not find pdb file while linking debug dll
-    list(APPEND CMAKE_EXE_LINKER_FLAGS /ignore:4099)
-  endif()
-else() # gcc clang
-  add_compile_options(-Wall -Wextra -pedantic -Weffc++)
-  add_compile_options(-Wno-gnu-zero-variadic-macro-arguments)
-endif()
-
 # Setup static build option
 option(BUILD_SHARED_LIBS "Build/link shared library" OFF)
 option(BUILD_TESTING "Build test" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
-if(NOT BUILD_SHARED_LIBS)
-  # Use /MT /MTd instead of /MD /MDd when building static library
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()  # BUILD_SHARED_LIBS
 
 
 
@@ -45,6 +25,9 @@ find_package(Qt5
     Svg
   REQUIRED
 )
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  find_package(Qt5 COMPONENTS X11Extras REQUIRED)
+endif()
 
 
 
@@ -60,6 +43,11 @@ if(BUILD_SHARED_LIBS)
 else()
   add_library(${PROJECT_NAME} STATIC)
 endif()
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    ${CMAKE_CURRENT_LIST_DIR}/include
+)
 
 target_precompile_headers(${PROJECT_NAME}
   INTERFACE
@@ -85,6 +73,11 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/src/Settings_p.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Settings.cpp
 
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/FramelessWindow.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessWindow.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessHelper.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessHelper.cpp
+
     ${CMAKE_CURRENT_LIST_DIR}/KtUtils.qrc
 )
 
@@ -93,21 +86,22 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Gui
     Qt5::Svg
+    $<$<PLATFORM_ID:Linux>:Qt5::X11Extras>
+    $<$<PLATFORM_ID:Linux>:X11>
 )
 
-if(NOT BUILD_SHARED_LIBS)
-  target_link_libraries(${PROJECT_NAME}
-    PUBLIC
-      Qt5::QSvgPlugin
-      Qt5::QSvgIconPlugin
-      $<$<PLATFORM_ID:Windows>:Qt5::QWindowsDirect2DIntegrationPlugin>
-  )
-endif()
-
-
-target_include_directories(${PROJECT_NAME}
+target_compile_options(${PROJECT_NAME}
   PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/include
+    $<$<PLATFORM_ID:Windows>:/W3>
+    $<$<PLATFORM_ID:Windows>:/wd4996>
+    $<$<PLATFORM_ID:Windows>:/wd4251>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-Wall>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Wall>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-Wextra>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Wextra>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-pedantic>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-pedantic>>
+    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Weffc++>>
 )
 
 
@@ -118,6 +112,8 @@ if(BUILD_TESTING)
   add_subdirectory(test)
   add_test(NAME TestGlobal COMMAND TestGlobal)
 endif()
+
+
 
 # Build example
 if(BUILD_EXAMPLES)

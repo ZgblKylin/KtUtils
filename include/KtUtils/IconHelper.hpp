@@ -1,5 +1,4 @@
-﻿#pragma once
-#ifndef KTUTILS_ICONHELPER_HPP
+﻿#ifndef KTUTILS_ICONHELPER_HPP
 #define KTUTILS_ICONHELPER_HPP
 
 #include "Global.hpp"

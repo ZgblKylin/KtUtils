@@ -1,0 +1,9 @@
+---
+BasedOnStyle: Google
+UseTab: Never
+---
+Language: Cpp
+DerivePointerAlignment: false
+PointerAlignment: Left
+SortIncludes: false
+---

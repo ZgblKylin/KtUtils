@@ -14,11 +14,13 @@ bool WaitFor(double timeout_milliseconds, QEventLoop::ProcessEventsFlags flags,
              const std::function<bool(void)>& isValid) {
   QElapsedTimer timer;
   timer.start();
-  Wait([&] {
-    return (isValid && isValid()) ||
-           (timer.nsecsElapsed() >= (timeout_milliseconds * 1e6));
-  }, flags);
-  if (isValid){
+  Wait(
+      [&] {
+        return (isValid && isValid()) ||
+               (timer.nsecsElapsed() >= (timeout_milliseconds * 1e6));
+      },
+      flags);
+  if (isValid) {
     return isValid();
   } else {
     return true;

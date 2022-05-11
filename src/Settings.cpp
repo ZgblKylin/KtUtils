@@ -1,8 +1,17 @@
-﻿#include <KtUtils/Settings>
-#include "Settings_p.hpp"
+﻿#include "Settings_p.hpp"
+#include <KtUtils/Json>
+#include <KtUtils/Settings>
 
 namespace KtUtils {
 namespace SettingsExtra {
+bool jsonReadFunc(QIODevice& device, QSettings::SettingsMap& map) {
+  return ::KtUtils::Json::settingsReadFunc(device, map);
+}
+
+bool jsonWriteFunc(QIODevice& device, const QSettings::SettingsMap& map) {
+  return ::KtUtils::Json::settingsWriteFunc(device, map);
+}
+
 bool xmlReadFunc(QIODevice& device, QSettings::SettingsMap& map) {
   QXmlStreamReader xml(&device);
   std::function<QVariant()> readNextValue = [&readNextValue,

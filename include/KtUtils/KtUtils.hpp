@@ -1,4 +1,3 @@
-#pragma once
 #ifndef KTUTILS_KTUTILS_HPP
 #define KTUTILS_KTUTILS_HPP
 
@@ -7,4 +6,4 @@
 #include "Json.hpp"
 #include "Settings.hpp"
 
-#endif // KTUTILS_KTUTILS_HPP
+#endif  // KTUTILS_KTUTILS_HPP

@@ -7,7 +7,7 @@
 namespace KtUtils {
 namespace SettingsExtra {
 // Check if a QSettings array
-bool CheckIfArray(const QVariantMap& map) {
+inline bool CheckIfArray(const QVariantMap& map) {
   const auto it = map.find(QStringLiteral("size"));
   if (it == map.cend()) return false;
 
@@ -21,7 +21,7 @@ bool CheckIfArray(const QVariantMap& map) {
 }
 
 // Convert QSettings array to QVariantList
-QVariant FromSettingsArray(const QVariant& value) {
+inline QVariant FromSettingsArray(const QVariant& value) {
   if (int(value.type()) != QMetaType::QVariantMap) return value;
 
   const QVariantMap map = value.toMap();
@@ -41,7 +41,7 @@ QVariant FromSettingsArray(const QVariant& value) {
 }
 
 // Convert QSettings::SettingsMap to QVariantMap tree
-QVariantMap FromSettingsMap(const QSettings::SettingsMap& map) {
+inline QVariantMap FromSettingsMap(const QSettings::SettingsMap& map) {
   std::function<void(QVariantMap*, QStringList, const QVariant&)> InsertKeys =
       [&InsertKeys](QVariantMap* map, QStringList keys, const QVariant& value) {
         const QString key = keys.takeFirst();
@@ -63,7 +63,7 @@ QVariantMap FromSettingsMap(const QSettings::SettingsMap& map) {
 }
 
 // Convert QVariantMap tree to QSettings::SettingsMap
-QSettings::SettingsMap ToSettingsMap(const QVariantMap& map) {
+inline QSettings::SettingsMap ToSettingsMap(const QVariantMap& map) {
   QSettings::SettingsMap ret;
   std::function<void(QString, const QVariant&)> InsertValue =
       [&InsertValue, &ret](QString keys, const QVariant& value) {
