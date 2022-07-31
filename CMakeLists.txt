@@ -73,11 +73,6 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/src/Settings_p.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Settings.cpp
 
-    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/FramelessWindow.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessWindow.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessHelper.hpp
-    ${CMAKE_CURRENT_LIST_DIR}/src/FramelessHelper.cpp
-
     ${CMAKE_CURRENT_LIST_DIR}/KtUtils.qrc
 )
 
