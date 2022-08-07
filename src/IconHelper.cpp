@@ -149,13 +149,52 @@ QFont IconHelper::font(Font fontType) {
 
   static QMap<int, int> kFontIds = {
       {Brand, QFontDatabase::addApplicationFont(QStringLiteral(
-                  ":/Fonts/otfs/Font Awesome 5 Brands-Regular-400.otf"))},
+                  ":/Fonts/otfs/Font Awesome 6 Brands-Regular-400.otf"))},
       {Regular, QFontDatabase::addApplicationFont(QStringLiteral(
-                    ":/Fonts/otfs/Font Awesome 5 Free-Regular-400.otf"))},
+                    ":/Fonts/otfs/Font Awesome 6 Free-Regular-400.otf"))},
       {Solid, QFontDatabase::addApplicationFont(QStringLiteral(
-                  ":/Fonts/otfs/Font Awesome 5 Free-Solid-900.otf"))},
+                  ":/Fonts/otfs/Font Awesome 6 Free-Solid-900.otf"))},
   };
   return QFont(
       QFontDatabase::applicationFontFamilies(kFontIds.value(fontType)).front());
+}
+
+QPixmap IconHelper::pixmap(Font fontType, QChar ch, int size,
+                           const QColor& color, QFont::Weight weight) {
+  QFont font = IconHelper::font(fontType);
+  font.setPixelSize(size);
+  font.setWeight(weight);
+
+  QPixmap pixmap(size, size);
+  pixmap.fill(Qt::transparent);
+  QPainter painter;
+  painter.begin(&pixmap);
+  painter.setRenderHint(QPainter::TextAntialiasing);
+  painter.setFont(font);
+  painter.drawText(QRect(0, 0, size, size), Qt::AlignCenter, QString(ch));
+  painter.end();
+  return pixmap;
+}
+
+QIcon IconHelper::icon(Font fontType, QChar ch, const QColor& color,
+                       QFont::Weight weight) {
+  static const QVector<int> sizes = {16, 24, 32,  36,  48,  64,
+                                     72, 96, 128, 144, 192, 256};
+
+  QIcon icon;
+  for (const int size : sizes) {
+    QPixmap px = pixmap(fontType, ch, size, color, weight);
+    icon.addPixmap(px, QIcon::Normal, QIcon::On);
+    icon.addPixmap(px, QIcon::Active, QIcon::On);
+    icon.addPixmap(px, QIcon::Selected, QIcon::On);
+    icon.addPixmap(px, QIcon::Normal, QIcon::Off);
+    icon.addPixmap(px, QIcon::Active, QIcon::Off);
+    icon.addPixmap(px, QIcon::Selected, QIcon::Off);
+
+    px = pixmap(fontType, ch, size, Qt::gray, weight);
+    icon.addPixmap(px, QIcon::Disabled, QIcon::On);
+    icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
+  }
+  return icon;
 }
 }  // namespace KtUtils
