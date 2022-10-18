@@ -63,6 +63,9 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/Global.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/Global.cpp
 
+    ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/AnchorWidget.hpp
+    ${CMAKE_CURRENT_LIST_DIR}/src/AnchorWidget.cpp
+
     ${CMAKE_CURRENT_LIST_DIR}/include/KtUtils/IconHelper.hpp
     ${CMAKE_CURRENT_LIST_DIR}/src/IconHelper.cpp
 

@@ -2,6 +2,7 @@
 #define KTUTILS_KTUTILS_HPP
 
 #include "Global.hpp"
+#include "AnchorWidget.hpp"
 #include "IconHelper.hpp"
 #include "Json.hpp"
 #include "Settings.hpp"
