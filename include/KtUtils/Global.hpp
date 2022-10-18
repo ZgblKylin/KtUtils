@@ -1,5 +1,6 @@
 ﻿#ifndef KTUTILS_GLOBAL_HPP
 #define KTUTILS_GLOBAL_HPP
+#ifdef __cplusplus
 
 #include <chrono>
 #include <functional>
@@ -102,4 +103,5 @@ inline bool WaitUntil(
 }
 }  // namespace KtUtils
 
+#endif  // __cplusplus
 #endif  // KTUTILS_GLOBAL_HPP
