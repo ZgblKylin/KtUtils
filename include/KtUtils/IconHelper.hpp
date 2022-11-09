@@ -2037,27 +2037,30 @@ class KTUTILS_EXPORT IconHelper : public QObject {
   /**
    * \brief Generate QPixmap for given icon
    * \note This function is SLOW, please hold the result and reuse it
-   *       instead of call multiple times.
+   *       instead of call multiple times, or turn on cached parameter.
    * \param iconType  Enum value for wanted icon.
    * \param size      Pixel size for generated image.
    * \param color     Fill color of the icon.
+   * \param cached    Cache the generated pixmap, return it next time.
    * \return          Generated QPixmap for the icon with given size and color.
    * \sa Icon, icon
    */
   static QPixmap pixmap(Icon iconType, int size = 16,
-                        const QColor& color = Qt::white);
+                        const QColor& color = Qt::white, bool cached = true);
 
   /**
    * \brief Generate QIcon for given icon with available sizes: 16, 24, 32, 36,
    *        48, 64, 72, 96, 128, 144, 192, 256.
    * \note This function is EXTREMELY SLOW, please hold the result and reuse it
-   *       instead of call multiple times.
+   *       instead of call multiple times, or turn on cached parameter.
    * \param iconType  Enum value for wanted icon.
    * \param color     Fill color of the icon, QIcon::Disabled will for to gray.
+   * \param cached    Cache the generated icon, return it next time.
    * \return          Generated QIcon for the icon with given size and color.
    * \sa Icon, pixmap, icon
    */
-  static QIcon icon(Icon iconType, const QColor& color = Qt::white);
+  static QIcon icon(Icon iconType, const QColor& color = Qt::white,
+                    bool cached = true);
 
   // Enumeration for font files
   enum Font { Brand, Regular, Solid };
@@ -2071,33 +2074,38 @@ class KTUTILS_EXPORT IconHelper : public QObject {
    *         of specified color and weight. */
   static QPixmap pixmap(Font fontType, QChar ch, int size = 16,
                         const QColor& color = Qt::white,
-                        QFont::Weight weight = QFont::Normal);
+                        QFont::Weight weight = QFont::Normal,
+                        bool cached = true);
   /** \brief Generate QIcon with given font and charactor code of specified
    *         color and weight. */
   static QIcon icon(Font fontType, QChar ch, const QColor& color = Qt::white,
-                    QFont::Weight weight = QFont::Normal);
+                    QFont::Weight weight = QFont::Normal, bool cached = true);
 
   /**
    * \brief Set icon to given widget
-   * \note This function is EXTREMELY SLOW, please avoid calling multiple times.
+   * \note This function is EXTREMELY SLOW, please avoid calling multiple times,
+   *       or turn on cached parameter.
    * \tparam T        Type of given widget.
    * \param widget    Widget to be set icon fpr.
    * \param iconType  Enum value for wanted icon.
    * \param color     Fill color of the icon, QIcon::Disabled will for to gray.
+   * \param cached    Cache the generated icon, return it next time.
    * \sa Icon, pixmap, icon
    */
   template <typename T>
   inline static void SetIcon(T* widget, Icon iconType,
-                             const QColor& color = Qt::white) {
-    widget->setProperty("icon", icon(iconType, color));
+                             const QColor& color = Qt::white,
+                             bool cached = true) {
+    widget->setProperty("icon", icon(iconType, color, cached));
   }
   /** \brief Set widget icon with given font and charactor code of specified
    *         color and weight. */
   template <typename T>
   inline static void SetIcon(T* widget, Font fontType, QChar ch,
                              const QColor& color = Qt::white,
-                             QFont::Weight weight = QFont::Normal) {
-    widget->setProperty("icon", icon(fontType, ch, color, weight));
+                             QFont::Weight weight = QFont::Normal,
+                             bool cached = true) {
+    widget->setProperty("icon", icon(fontType, ch, color, weight, cached));
   }
 
  private:

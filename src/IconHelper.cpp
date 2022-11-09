@@ -116,14 +116,53 @@ QPixmap RenderPixmap(QSharedPointer<QSvgRenderer> renderer, int size) {
   return pixmap;
 }
 
-QPixmap IconHelper::pixmap(Icon iconType, int size, const QColor& color) {
+QPixmap IconHelper::pixmap(Icon iconType, int size, const QColor& color,
+                           bool cached) {
+  static QMutex mutex;
+  using Key = std::tuple<Icon, int, QColor, bool>;
+  static std::vector<std::pair<Key, QPixmap>> cache;
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    auto it = std::find_if(cache.begin(), cache.end(),
+                           [&](const std::pair<Key, QPixmap>& p) {
+                             return std::get<0>(p.first) == iconType &&
+                                    std::get<1>(p.first) == size &&
+                                    std::get<2>(p.first) == color &&
+                                    std::get<3>(p.first) == cached;
+                           });
+    if (it != cache.end()) {
+      return it->second;
+    }
+  }
+
   QSharedPointer<QSvgRenderer> renderer = GetRenderer(iconType, color);
-  return RenderPixmap(renderer, size);
+  QPixmap pixmap = RenderPixmap(renderer, size);
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    cache.emplace_back(Key{iconType, size, color, cached}, pixmap);
+  }
+  return pixmap;
 }
 
-QIcon IconHelper::icon(Icon iconType, const QColor& color) {
+QIcon IconHelper::icon(Icon iconType, const QColor& color, bool cached) {
   static const QVector<int> sizes = {16, 24, 32,  36,  48,  64,
                                      72, 96, 128, 144, 192, 256};
+
+  static QMutex mutex;
+  using Key = std::tuple<Icon, QColor, bool>;
+  static std::vector<std::pair<Key, QIcon>> cache;
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    auto it = std::find_if(cache.begin(), cache.end(),
+                           [&](const std::pair<Key, QIcon>& p) {
+                             return std::get<0>(p.first) == iconType &&
+                                    std::get<1>(p.first) == color &&
+                                    std::get<2>(p.first) == cached;
+                           });
+    if (it != cache.end()) {
+      return it->second;
+    }
+  }
 
   QIcon icon;
   QSharedPointer<QSvgRenderer> renderer = GetRenderer(iconType, color);
@@ -140,6 +179,10 @@ QIcon IconHelper::icon(Icon iconType, const QColor& color) {
     px = RenderPixmap(renderer_gray, size);
     icon.addPixmap(px, QIcon::Disabled, QIcon::On);
     icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
+  }
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    cache.emplace_back(Key{iconType, color, cached}, icon);
   }
   return icon;
 }
@@ -160,7 +203,27 @@ QFont IconHelper::font(Font fontType) {
 }
 
 QPixmap IconHelper::pixmap(Font fontType, QChar ch, int size,
-                           const QColor& color, QFont::Weight weight) {
+                           const QColor& color, QFont::Weight weight,
+                           bool cached) {
+  static QMutex mutex;
+  using Key = std::tuple<Font, QChar, int, QColor, QFont::Weight, bool>;
+  static std::vector<std::pair<Key, QPixmap>> cache;
+
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    auto it = std::find_if(
+        cache.begin(), cache.end(), [&](const std::pair<Key, QPixmap>& p) {
+          return std::get<0>(p.first) == fontType &&
+                 std::get<1>(p.first) == ch && std::get<2>(p.first) == size &&
+                 std::get<3>(p.first) == color &&
+                 std::get<4>(p.first) == weight &&
+                 std::get<5>(p.first) == cached;
+        });
+    if (it != cache.end()) {
+      return it->second;
+    }
+  }
+
   QFont font = IconHelper::font(fontType);
   font.setPixelSize(size);
   font.setWeight(weight);
@@ -173,13 +236,35 @@ QPixmap IconHelper::pixmap(Font fontType, QChar ch, int size,
   painter.setFont(font);
   painter.drawText(QRect(0, 0, size, size), Qt::AlignCenter, QString(ch));
   painter.end();
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    cache.emplace_back(Key{fontType, ch, size, color, weight, cached}, pixmap);
+  }
   return pixmap;
 }
 
 QIcon IconHelper::icon(Font fontType, QChar ch, const QColor& color,
-                       QFont::Weight weight) {
+                       QFont::Weight weight, bool cached) {
   static const QVector<int> sizes = {16, 24, 32,  36,  48,  64,
                                      72, 96, 128, 144, 192, 256};
+
+  static QMutex mutex;
+  using Key = std::tuple<Font, QChar, QColor, QFont::Weight, bool>;
+  static std::vector<std::pair<Key, QIcon>> cache;
+
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    auto it = std::find_if(
+        cache.begin(), cache.end(), [&](const std::pair<Key, QIcon>& p) {
+          return std::get<0>(p.first) == fontType &&
+                 std::get<1>(p.first) == ch && std::get<2>(p.first) == color &&
+                 std::get<3>(p.first) == weight &&
+                 std::get<4>(p.first) == cached;
+        });
+    if (it != cache.end()) {
+      return it->second;
+    }
+  }
 
   QIcon icon;
   for (const int size : sizes) {
@@ -194,6 +279,10 @@ QIcon IconHelper::icon(Font fontType, QChar ch, const QColor& color,
     px = pixmap(fontType, ch, size, Qt::gray, weight);
     icon.addPixmap(px, QIcon::Disabled, QIcon::On);
     icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
+  }
+  if (cached) {
+    QMutexLocker locker(&mutex);
+    cache.emplace_back(Key{fontType, ch, color, weight, cached}, icon);
   }
   return icon;
 }
