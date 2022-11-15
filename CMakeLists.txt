@@ -90,16 +90,16 @@ target_link_libraries(${PROJECT_NAME}
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
-    $<$<PLATFORM_ID:Windows>:/W3>
-    $<$<PLATFORM_ID:Windows>:/wd4996>
-    $<$<PLATFORM_ID:Windows>:/wd4251>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-Wall>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Wall>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-Wextra>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Wextra>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:C>:-pedantic>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-pedantic>>
-    $<$<PLATFORM_ID:Linux>:$<$<COMPILE_LANGUAGE:CXX>:-Weffc++>>
+    $<$<CXX_COMPILER_ID:MSVC>:/W3>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-Wall>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Wall>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-Wextra>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Wextra>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-pedantic>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-pedantic>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Weffc++>>
 )
 
 
