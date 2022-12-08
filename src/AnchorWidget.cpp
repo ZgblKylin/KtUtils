@@ -1,5 +1,7 @@
 #include <KtUtils/AnchorWidget>
 
+Q_DECLARE_METATYPE(QGraphicsLayoutItem*)
+
 namespace KtUtils {
 /* ============================== AnchorWidget ============================== */
 struct AnchorWidget::Private {
@@ -95,7 +97,6 @@ bool AnchorWidget::event(QEvent* event) {
 /* ============================== AnchorWidget ============================== */
 
 /* ============================== AnchorLayout ============================== */
-Q_DECLARE_METATYPE(QGraphicsLayoutItem*)
 static constexpr const char* kItemPropertyName = "GraphicsLayoutItem";
 
 AnchorLayout::AnchorLayout(AnchorWidget* parent) {
