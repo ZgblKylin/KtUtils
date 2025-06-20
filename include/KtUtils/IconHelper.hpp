@@ -2035,6 +2035,15 @@ class KTUTILS_EXPORT IconHelper : public QObject {
   Q_ENUM(Icon)
 
   /**
+   * \brief Generate svg code for given icon
+   * \param iconType  Enum value for wanted icon.
+   * \param color     Fill color of the icon.
+   * \return          Generated svg code for content parameter of QtSvg classes
+   * \sa Icon, icon
+   */
+  static QByteArray GetSvg(Icon iconType, QColor color);
+
+  /**
    * \brief Generate QPixmap for given icon
    * \note This function is SLOW, please hold the result and reuse it
    *       instead of call multiple times, or turn on cached parameter.

@@ -75,8 +75,30 @@ void SetColor(QXmlStreamReader& reader, QXmlStreamWriter& writer,
   }
 }
 
-QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
-                                         QColor color) {
+static QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
+                                                QColor color) {
+  QString svg = IconHelper::GetSvg(iconType, color);
+  return QSharedPointer<QSvgRenderer>::create(svg);
+}
+
+static QPixmap RenderPixmap(QSharedPointer<QSvgRenderer> renderer, int size) {
+  QPixmap pixmap = QPixmap(size, size);
+  pixmap.fill(Qt::transparent);
+
+  QSizeF svgSize =
+      renderer->defaultSize().scaled(size, size, Qt::KeepAspectRatio);
+  QRectF rect(0, 0, svgSize.width(), svgSize.height());
+  rect.moveCenter(QPointF(size / 2.0, size / 2.0));
+
+  QPainter painter;
+  painter.begin(&pixmap);
+  renderer->render(&painter, rect);
+  painter.end();
+
+  return pixmap;
+}
+
+QByteArray IconHelper::GetSvg(Icon iconType, QColor color) {
   InitializeResources();
 
   static QMetaObject mo = IconHelper::staticMetaObject;
@@ -93,27 +115,8 @@ QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
 
   QString xml;
   QXmlStreamWriter writer(&xml);
-
   SetColor(reader, writer, color.name(QColor::HexRgb));
-
-  return QSharedPointer<QSvgRenderer>::create(xml.toUtf8());
-}
-
-QPixmap RenderPixmap(QSharedPointer<QSvgRenderer> renderer, int size) {
-  QPixmap pixmap = QPixmap(size, size);
-  pixmap.fill(Qt::transparent);
-
-  QSizeF svgSize =
-      renderer->defaultSize().scaled(size, size, Qt::KeepAspectRatio);
-  QRectF rect(0, 0, svgSize.width(), svgSize.height());
-  rect.moveCenter(QPointF(size / 2.0, size / 2.0));
-
-  QPainter painter;
-  painter.begin(&pixmap);
-  renderer->render(&painter, rect);
-  painter.end();
-
-  return pixmap;
+  return xml.toUtf8();
 }
 
 QPixmap IconHelper::pixmap(Icon iconType, int size, const QColor& color,
