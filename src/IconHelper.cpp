@@ -1,12 +1,14 @@
 ﻿#include <KtUtils/IconHelper>
 
-void InitializeResources() {
+static bool InitializeResources() {
 #ifndef KTUTILS_SHARED_LIBRARY
   static const bool kResourceInitialized = [] {
     Q_INIT_RESOURCE(KtUtils);
     return true;
   }();
-  Q_UNUSED(kResourceInitialized)
+  return kResourceInitialized;
+#else
+  return true;
 #endif
 }
 
