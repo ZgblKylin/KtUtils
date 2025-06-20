@@ -5,7 +5,9 @@
 #include <chrono>
 #include <functional>
 
+#ifndef QT_MESSAGELOGCONTEXT
 #define QT_MESSAGELOGCONTEXT
+#endif  // QT_MESSAGELOGCONTEXT
 #include <QtCore/QtCore>
 #include <QtConcurrent/QtConcurrent>
 #include <QtGui/QtGui>
