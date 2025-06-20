@@ -6,6 +6,13 @@ SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_DEBUG_POSTFIX d)
 set(CMAKE_CXX_STANDARD 14)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  if(CMAKE_BUILD_TYPE MATCHES "Debug")
+    # Not find pdb file while linking debug dll
+    list(APPEND CMAKE_EXE_LINKER_FLAGS /ignore:4099)
+  endif()
+endif()
+
 # Setup static build option
 option(BUILD_SHARED_LIBS "Build/link shared library" OFF)
 option(BUILD_TESTING "Build test" OFF)
@@ -18,16 +25,14 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 # set(CMAKE_INCLUDE_CURRENT_DIR ON)  # if(CMAKE_VERSION VERSION_LESS "3.7.0")
-find_package(Qt5
-  COMPONENTS
-    Core
-    Gui
-    Svg
-  REQUIRED
+set(QT_LIBS
+  Core
+  Gui
+  Svg
 )
-if(CMAKE_SYSTEM_NAME MATCHES "Linux")
-  find_package(Qt5 COMPONENTS X11Extras REQUIRED)
-endif()
+set(QT_MODULES ${QT_LIBS})
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS ${QT_MODULES})
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS ${QT_MODULES})
 
 
 
@@ -79,20 +84,19 @@ target_sources(${PROJECT_NAME}
     ${CMAKE_CURRENT_LIST_DIR}/KtUtils.qrc
 )
 
-target_link_libraries(${PROJECT_NAME}
-  PUBLIC
-    Qt5::Core
-    Qt5::Gui
-    Qt5::Svg
-    $<$<PLATFORM_ID:Linux>:Qt5::X11Extras>
-    $<$<PLATFORM_ID:Linux>:X11>
-)
+foreach(QT_MODULE ${QT_LIBS})
+  target_link_libraries(${PROJECT_NAME} PUBLIC
+    Qt${QT_VERSION_MAJOR}::${QT_MODULE}
+  )
+endforeach()
 
 target_compile_options(${PROJECT_NAME}
   PUBLIC
     $<$<CXX_COMPILER_ID:MSVC>:/W3>
     $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
     $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
+    $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus> # Enable __cplusplus macro
+    $<$<CXX_COMPILER_ID:MSVC>:/utf-8>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-Wall>>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Wall>>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-Wextra>>
@@ -100,6 +104,8 @@ target_compile_options(${PROJECT_NAME}
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-pedantic>>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-pedantic>>
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Weffc++>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:C>:-Wno-gnu-zero-variadic-macro-arguments>>
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<PLATFORM_ID:Linux>>:$<$<COMPILE_LANGUAGE:CXX>:-Wno-gnu-zero-variadic-macro-arguments>>
 )
 
 
