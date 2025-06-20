@@ -149,7 +149,8 @@ QPixmap IconHelper::pixmap(Icon iconType, int size, const QColor& color,
   return pixmap;
 }
 
-QIcon IconHelper::icon(Icon iconType, const QColor& color, bool cached) {
+QIcon IconHelper::icon(Icon iconType, const QColor& color,
+                       const QColor& disabled_color, bool cached) {
   static const QVector<int> sizes = {16, 24, 32,  36,  48,  64,
                                      72, 96, 128, 144, 192, 256};
 
@@ -171,7 +172,8 @@ QIcon IconHelper::icon(Icon iconType, const QColor& color, bool cached) {
 
   QIcon icon;
   QSharedPointer<QSvgRenderer> renderer = GetRenderer(iconType, color);
-  QSharedPointer<QSvgRenderer> renderer_gray = GetRenderer(iconType, Qt::gray);
+  QSharedPointer<QSvgRenderer> renderer_disabled =
+      GetRenderer(iconType, disabled_color);
   for (const int size : sizes) {
     QPixmap px = RenderPixmap(renderer, size);
     icon.addPixmap(px, QIcon::Normal, QIcon::On);
@@ -181,7 +183,7 @@ QIcon IconHelper::icon(Icon iconType, const QColor& color, bool cached) {
     icon.addPixmap(px, QIcon::Active, QIcon::Off);
     icon.addPixmap(px, QIcon::Selected, QIcon::Off);
 
-    px = RenderPixmap(renderer_gray, size);
+    px = RenderPixmap(renderer_disabled, size);
     icon.addPixmap(px, QIcon::Disabled, QIcon::On);
     icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
   }
@@ -249,7 +251,8 @@ QPixmap IconHelper::pixmap(Font fontType, QChar ch, int size,
 }
 
 QIcon IconHelper::icon(Font fontType, QChar ch, const QColor& color,
-                       QFont::Weight weight, bool cached) {
+                       const QColor& disabled_color, QFont::Weight weight,
+                       bool cached) {
   static const QVector<int> sizes = {16, 24, 32,  36,  48,  64,
                                      72, 96, 128, 144, 192, 256};
 
@@ -281,7 +284,7 @@ QIcon IconHelper::icon(Font fontType, QChar ch, const QColor& color,
     icon.addPixmap(px, QIcon::Active, QIcon::Off);
     icon.addPixmap(px, QIcon::Selected, QIcon::Off);
 
-    px = pixmap(fontType, ch, size, Qt::gray, weight);
+    px = pixmap(fontType, ch, size, disabled_color, weight);
     icon.addPixmap(px, QIcon::Disabled, QIcon::On);
     icon.addPixmap(px, QIcon::Disabled, QIcon::Off);
   }
