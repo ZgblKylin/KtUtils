@@ -79,7 +79,7 @@ void SetColor(QXmlStreamReader& reader, QXmlStreamWriter& writer,
 
 static QSharedPointer<QSvgRenderer> GetRenderer(IconHelper::Icon iconType,
                                                 QColor color) {
-  QString svg = IconHelper::GetSvg(iconType, color);
+  QByteArray svg = IconHelper::GetSvg(iconType, color);
   return QSharedPointer<QSvgRenderer>::create(svg);
 }
 
